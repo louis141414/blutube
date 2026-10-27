@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Watch · Blutube</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Blutube</a>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container watch-page">
+    <div class="player-wrap">
+      <video id="player" controls playsinline preload="metadata">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <div class="watch-info">
+      <h1 id="title">Loading…</h1>
+      <p id="description" class="meta"></p>
+    </div>
+
+    <p class="back">
+      <a href="index.html">← Back to all videos</a>
+    </p>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Blutube · static video site on GitHub Pages</p>
+    </div>
+  </footer>
+
+  <script src="videos.js"></script>
+  <script>
+    // Simple player logic
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id") || "demo";
+    const video = window.BLUTUBE_VIDEOS.find(v => v.id === id) || window.BLUTUBE_VIDEOS[0];
+
+    document.getElementById("title").textContent = video.title;
+    document.getElementById("description").textContent = video.description || "";
+    document.title = video.title + " · Blutube";
+
+    const player = document.getElementById("player");
+    if (video.src) {
+      player.src = video.src;
+    } else {
+      // Fallback sample video (Big Buck Bunny – public domain)
+      player.src = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+    }
+  </script>
+</body>
+</html>

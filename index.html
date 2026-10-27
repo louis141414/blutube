@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blutube</title>
+  <meta name="description" content="Blutube – a simple personal video platform" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Blutube</a>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="#about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Blutube</h1>
+      <p>Your own simple video platform. Hosted on GitHub Pages.</p>
+    </section>
+
+    <section class="video-grid" id="videos">
+      <!-- Example video card. Replace the src with your own video URL (R2, S3, Bunny, etc.) -->
+      <article class="video-card">
+        <a href="watch.html?id=demo">
+          <div class="thumb">
+            <img src="https://picsum.photos/seed/blutube1/640/360" alt="Demo video thumbnail" />
+            <span class="duration">3:24</span>
+          </div>
+          <h2>Demo Video</h2>
+          <p class="meta">Blutube · Example</p>
+        </a>
+      </article>
+
+      <article class="video-card">
+        <a href="watch.html?id=sample">
+          <div class="thumb">
+            <img src="https://picsum.photos/seed/blutube2/640/360" alt="Sample video thumbnail" />
+            <span class="duration">1:45</span>
+          </div>
+          <h2>Sample Clip</h2>
+          <p class="meta">Blutube · Example</p>
+        </a>
+      </article>
+
+      <article class="video-card">
+        <a href="watch.html?id=placeholder">
+          <div class="thumb">
+            <img src="https://picsum.photos/seed/blutube3/640/360" alt="Placeholder thumbnail" />
+            <span class="duration">0:30</span>
+          </div>
+          <h2>Add your own videos</h2>
+          <p class="meta">Replace these cards</p>
+        </a>
+      </article>
+    </section>
+
+    <section id="about" class="about">
+      <h2>How this works</h2>
+      <p>
+        This is a static site running on GitHub Pages.
+        The website files live in this repository.
+        Actual video files should be hosted on cheap object storage
+        (Cloudflare R2, Backblaze B2, Bunny Stream, etc.) and linked here.
+      </p>
+      <p>
+        Edit <code>videos.js</code> and the HTML cards to add your own content.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Blutube · static video site on GitHub Pages</p>
+    </div>
+  </footer>
+
+  <script src="videos.js"></script>
+</body>
+</html>
