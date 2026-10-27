@@ -1,54 +1,46 @@
 # Blutube
 
-A simple static video platform that runs on **GitHub Pages**.
+A YouTube-style static video platform that runs on **GitHub Pages**.
 
 ## Live site
 
-After enabling GitHub Pages it will be available at:
+After enabling Pages:
 
-`https://louis141414.github.io/blutube/`
+**https://louis141414.github.io/blutube/**
 
-## How to turn on GitHub Pages
+## Enable GitHub Pages
 
-1. Go to the repository **Settings → Pages**
-2. Under **Source** choose **Deploy from a branch**
-3. Select branch `main` and folder `/ (root)`
+1. Repo → **Settings** → **Pages**
+2. Source: **Deploy from a branch**
+3. Branch: `main` / folder: `/ (root)`
 4. Save
 
-GitHub will publish the site in about a minute.
+## Features (YouTube-like)
 
-## Adding your own videos
+- Top bar with logo, search, and icons
+- Mini sidebar (Home, Trending, etc.)
+- Filter chips
+- Video grid with channel avatars, views, upload date
+- Watch page with player + related videos sidebar
+- Like / Subscribe / Share style buttons
+- Dark theme matching modern YouTube
 
-1. Host the video files somewhere (recommended):
-   - Cloudflare R2 (cheap egress)
-   - Backblaze B2
-   - Bunny Stream
-   - Any public HTTPS URL
+## Add your own videos
 
-2. Edit `videos.js` and add entries like:
+Edit `videos.js` and add objects like:
 
 ```js
 {
   id: "my-video",
-  title: "My cool video",
-  description: "Short description",
-  src: "https://your-storage.com/path/to/video.mp4",
-  thumbnail: "https://your-storage.com/path/to/thumb.jpg",
-  duration: "4:12"
+  title: "My video title",
+  description: "Description text",
+  src: "https://your-cdn.com/video.mp4",
+  thumbnail: "https://your-cdn.com/thumb.jpg",
+  duration: "4:12",
+  channel: "Your Channel",
+  views: "12K views",
+  uploaded: "3 days ago"
 }
 ```
 
-3. Update the cards on `index.html` (or generate them from `videos.js` later).
-
-Do **not** put large video files in this GitHub repository. GitHub Pages is only for the website files.
-
-## Files
-
-- `index.html` – homepage with video grid
-- `watch.html` – single video player page
-- `style.css` – dark theme styling
-- `videos.js` – list of videos
-
-## Limits
-
-This is a static site. There is no upload form, no user accounts, and no live streaming. For a full YouTube-like platform you need a real server (e.g. PeerTube).
+Host the actual video files on Cloudflare R2, Backblaze B2, or Bunny Stream — not in this repo.
