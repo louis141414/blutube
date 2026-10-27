@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Blutube</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 32 32" width="28" height="28">
+            <defs>
+              <linearGradient id="btGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#5b8cff"/>
+                <stop offset="100%" stop-color="#8b5cf6"/>
+              </linearGradient>
+            </defs>
+            <rect width="32" height="32" rx="8" fill="url(#btGrad)"/>
+            <path d="M12 9v14l12-7z" fill="white"/>
+          </svg>
+        </span>
+        <span class="brand-text">Blutube Admin</span>
+      </a>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" class="btn-ghost">← Site</a>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-header">
+      <div>
+        <h1>Videos</h1>
+        <p class="muted">Data lives in <code>data/videos.json</code>. Edits are saved in this browser for testing. Export JSON and replace the file in the repo to publish.</p>
+      </div>
+      <div class="admin-actions">
+        <button class="btn" id="btnAdd"></button>
+        <button class="btn btn-secondary" id="btnExport"></button>
+        <button class="btn btn-ghost" id="btnReset">Reset to JSON file</button>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+      <section class="admin-list" id="list"></section>
+
+      <section class="admin-form-wrap">
+        <h2 id="formTitle">Add video</h2>
+        <form id="form" class="admin-form">
+          <input type="hidden" id="editId" />
+          <label>Title
+            <input required name="title" id="fTitle" />
+          </label>
+          <label>Video URL (mp4)
+            <input required name="src" id="fSrc" placeholder="https://.../video.mp4" />
+          </label>
+          <label>Thumbnail URL
+            <input name="thumbnail" id="fThumb" placeholder="https://.../thumb.jpg" />
+          </label>
+          <label>Duration
+            <input name="duration" id="fDuration" placeholder="4:20" />
+          </label>
+          <label>Channel
+            <input name="channel" id="fChannel" />
+          </label>
+          <label>Views
+            <input name="views" id="fViews" placeholder="12K views" />
+          </label>
+          <label>Uploaded
+            <input name="uploaded" id="fUploaded" placeholder="3 days ago" />
+          </label>
+          <label>Category
+            <input name="category" id="fCategory" placeholder="Music" />
+          </label>
+          <label>Description
+            <textarea name="description" id="fDesc" rows="4"></textarea>
+          </label>
+          <div class="form-btns">
+            <button type="submit" class="btn" id="btnSave"></button>
+            <button type="button" class="btn btn-ghost" id="btnCancel">Cancel</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/icons.js"></script>
+  <script src="js/store.js"></script>
+  <script>
+    document.getElementById("btnAdd").innerHTML = icon("plus") + " Add video";
+    document.getElementById("btnExport").innerHTML = icon("download") + " Export JSON";
+    document.getElementById("btnSave").innerHTML = icon("save") + " Save";
+
+    let videos = [];
+    let editingId = null;
+
+    function escapeHtml(s) {
+      return String(s || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    function renderList() {
+      const el = document.getElementById("list");
+      if (!videos.length) {
+        el.innerHTML = `<p class="empty">No videos yet. Add one.</p>`;
+        return;
+      }
+      el.innerHTML = videos.map(v => `
+        <article class="admin-card">
+          <img src="${v.thumbnail || "https://picsum.photos/seed/empty/160/90"}" alt="" />
+          <div class="admin-card-body">
+            <h3>${escapeHtml(v.title)}</h3>
+            <p class="muted">${escapeHtml(v.channel)} · ${escapeHtml(v.duration)} · ${escapeHtml(v.category || "")}</p>
+            <p class="muted small">${escapeHtml(v.id)}</p>
+          </div>
+          <div class="admin-card-actions">
+            <button class="icon-btn" data-edit="${escapeHtml(v.id)}" title="Edit">${icon("edit")}</button>
+            <button class="icon-btn danger" data-del="${escapeHtml(v.id)}" title="Delete">${icon("trash")}</button>
+          </div>
+        </article>
+      `).join("");
+
+      el.querySelectorAll("[data-edit]").forEach(btn => {
+        btn.addEventListener("click", () => startEdit(btn.dataset.edit));
+      });
+      el.querySelectorAll("[data-del]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (!confirm("Delete this video?")) return;
+          videos = videos.filter(v => v.id !== btn.dataset.del);
+          BlutubeStore.saveLocal(videos);
+          if (editingId === btn.dataset.del) resetForm();
+          renderList();
+        });
+      });
+    }
+
+    function resetForm() {
+      editingId = null;
+      document.getElementById("formTitle").textContent = "Add video";
+      document.getElementById("form").reset();
+      document.getElementById("editId").value = "";
+    }
+
+    function startEdit(id) {
+      const v = videos.find(x => x.id === id);
+      if (!v) return;
+      editingId = id;
+      document.getElementById("formTitle").textContent = "Edit video";
+      document.getElementById("editId").value = v.id;
+      document.getElementById("fTitle").value = v.title || "";
+      document.getElementById("fSrc").value = v.src || "";
+      document.getElementById("fThumb").value = v.thumbnail || "";
+      document.getElementById("fDuration").value = v.duration || "";
+      document.getElementById("fChannel").value = v.channel || "";
+      document.getElementById("fViews").value = v.views || "";
+      document.getElementById("fUploaded").value = v.uploaded || "";
+      document.getElementById("fCategory").value = v.category || "";
+      document.getElementById("fDesc").value = v.description || "";
+      document.getElementById("fTitle").focus();
+    }
+
+    document.getElementById("form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = {
+        id: editingId || BlutubeStore.makeId(document.getElementById("fTitle").value),
+        title: document.getElementById("fTitle").value.trim(),
+        src: document.getElementById("fSrc").value.trim(),
+        thumbnail: document.getElementById("fThumb").value.trim() || `https://picsum.photos/seed/${Date.now()}/640/360`,
+        duration: document.getElementById("fDuration").value.trim() || "0:00",
+        channel: document.getElementById("fChannel").value.trim() || "Unknown",
+        views: document.getElementById("fViews").value.trim() || "0 views",
+        uploaded: document.getElementById("fUploaded").value.trim() || "Just now",
+        category: document.getElementById("fCategory").value.trim() || "General",
+        description: document.getElementById("fDesc").value.trim()
+      };
+
+      if (editingId) {
+        videos = videos.map(v => (v.id === editingId ? data : v));
+      } else {
+        videos.unshift(data);
+      }
+      BlutubeStore.saveLocal(videos);
+      resetForm();
+      renderList();
+    });
+
+    document.getElementById("btnAdd").addEventListener("click", () => {
+      resetForm();
+      document.getElementById("fTitle").focus();
+    });
+
+    document.getElementById("btnCancel").addEventListener("click", resetForm);
+
+    document.getElementById("btnExport").addEventListener("click", () => {
+      BlutubeStore.downloadJSON(videos);
+    });
+
+    document.getElementById("btnReset").addEventListener("click", async () => {
+      if (!confirm("Discard local changes and reload from data/videos.json?")) return;
+      BlutubeStore.clearLocal();
+      videos = await BlutubeStore.load();
+      resetForm();
+      renderList();
+    });
+
+    async function init() {
+      videos = await BlutubeStore.load();
+      renderList();
+    }
+    init().catch(err => {
+      document.getElementById("list").innerHTML = `<p class="empty">Failed to load videos: ${err.message}</p>`;
+    });
+  </script>
+</body>
+</html>

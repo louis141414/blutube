@@ -1,0 +1,74 @@
+[
+  {
+    "id": "demo",
+    "title": "Big Buck Bunny",
+    "description": "Classic open-source animated short by the Blender Foundation. Used as a test video.",
+    "src": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "thumbnail": "https://picsum.photos/seed/blutube1/640/360",
+    "duration": "9:56",
+    "channel": "Blender Foundation",
+    "views": "12M views",
+    "uploaded": "2 years ago",
+    "category": "Animation"
+  },
+  {
+    "id": "sample",
+    "title": "Elephants Dream",
+    "description": "The world's first open movie, made entirely with open source software.",
+    "src": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "thumbnail": "https://picsum.photos/seed/blutube2/640/360",
+    "duration": "10:53",
+    "channel": "Orange Open Movie",
+    "views": "4.8M views",
+    "uploaded": "5 years ago",
+    "category": "Animation"
+  },
+  {
+    "id": "sintel",
+    "title": "Sintel",
+    "description": "A fantasy short about a girl searching for her lost pet dragon.",
+    "src": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "thumbnail": "https://picsum.photos/seed/blutube3/640/360",
+    "duration": "14:48",
+    "channel": "Blender Foundation",
+    "views": "8.1M views",
+    "uploaded": "3 years ago",
+    "category": "Fantasy"
+  },
+  {
+    "id": "tears",
+    "title": "Tears of Steel",
+    "description": "Science-fiction short combining live action and CGI by the Blender Institute.",
+    "src": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "thumbnail": "https://picsum.photos/seed/blutube4/640/360",
+    "duration": "12:14",
+    "channel": "Blender Institute",
+    "views": "3.2M views",
+    "uploaded": "4 years ago",
+    "category": "Sci-Fi"
+  },
+  {
+    "id": "blazes",
+    "title": "For Bigger Blazes",
+    "description": "Short test clip from the Google sample collection.",
+    "src": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "thumbnail": "https://picsum.photos/seed/blutube5/640/360",
+    "duration": "0:15",
+    "channel": "Google Samples",
+    "views": "890K views",
+    "uploaded": "1 year ago",
+    "category": "Test"
+  },
+  {
+    "id": "joyrides",
+    "title": "For Bigger Joyrides",
+    "description": "Another short sample useful for testing the player.",
+    "src": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "thumbnail": "https://picsum.photos/seed/blutube6/640/360",
+    "duration": "0:15",
+    "channel": "Google Samples",
+    "views": "1.1M views",
+    "uploaded": "1 year ago",
+    "category": "Test"
+  }
+]

@@ -1,46 +1,45 @@
 # Blutube
 
-A YouTube-style static video platform that runs on **GitHub Pages**.
+Static YouTube-style video site powered by a **JSON file**. Runs on GitHub Pages.
 
-## Live site
+## Live
 
-After enabling Pages:
+https://louis141414.github.io/blutube/
 
-**https://louis141414.github.io/blutube/**
+## Enable Pages
 
-## Enable GitHub Pages
+**Settings → Pages → Deploy from a branch → `main` / root**
 
-1. Repo → **Settings** → **Pages**
-2. Source: **Deploy from a branch**
-3. Branch: `main` / folder: `/ (root)`
-4. Save
+## How data works
 
-## Features (YouTube-like)
+- Source of truth: `data/videos.json`
+- Homepage, watch page, and search all load from that JSON
+- **Admin** (`admin.html`):
+  - Add / edit / delete videos
+  - Saves changes in the browser (localStorage) for testing
+  - **Export JSON** downloads an updated `videos.json`
+  - Replace `data/videos.json` in the repo and commit to publish
+  - **Reset to JSON file** discards local test edits
 
-- Top bar with logo, search, and icons
-- Mini sidebar (Home, Trending, etc.)
-- Filter chips
-- Video grid with channel avatars, views, upload date
-- Watch page with player + related videos sidebar
-- Like / Subscribe / Share style buttons
-- Dark theme matching modern YouTube
+## Test videos
 
-## Add your own videos
+The default JSON uses public sample MP4s from Google’s test bucket (Big Buck Bunny, Sintel, etc.).
 
-Edit `videos.js` and add objects like:
+## Pages
 
-```js
-{
-  id: "my-video",
-  title: "My video title",
-  description: "Description text",
-  src: "https://your-cdn.com/video.mp4",
-  thumbnail: "https://your-cdn.com/thumb.jpg",
-  duration: "4:12",
-  channel: "Your Channel",
-  views: "12K views",
-  uploaded: "3 days ago"
-}
-```
+| File | Purpose |
+|------|--------|
+| `index.html` | Home grid, search, category chips |
+| `watch.html` | Player + related videos |
+| `admin.html` | Manage videos + export JSON |
+| `data/videos.json` | All video metadata |
+| `js/store.js` | Load / save / export helpers |
+| `js/icons.js` | SVG icons |
 
-Host the actual video files on Cloudflare R2, Backblaze B2, or Bunny Stream — not in this repo.
+## Logo
+
+Blue–purple gradient mark (not a YouTube clone).
+
+## Limits
+
+Pure static hosting: no real server uploads. Put video files on any public HTTPS host (R2, B2, Bunny, etc.) and paste the URL in Admin.

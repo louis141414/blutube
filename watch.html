@@ -6,99 +6,126 @@
   <title>Watch · Blutube</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="yt-header">
-    <div class="header-left">
-      <button class="menu-btn" aria-label="Menu">☰</button>
-      <a href="index.html" class="logo">
-        <span class="logo-icon">▶</span>
-        <span class="logo-text">Blutube</span>
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="28" height="28">
+            <defs>
+              <linearGradient id="btGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#5b8cff"/>
+                <stop offset="100%" stop-color="#8b5cf6"/>
+              </linearGradient>
+            </defs>
+            <rect width="32" height="32" rx="8" fill="url(#btGrad)"/>
+            <path d="M12 9v14l12-7z" fill="white"/>
+          </svg>
+        </span>
+        <span class="brand-text">Blutube</span>
       </a>
     </div>
-
-    <div class="header-center">
-      <div class="search-box">
-        <input type="search" placeholder="Search" />
-        <button class="search-btn" aria-label="Search">🔍</button>
+    <div class="topbar-center">
+      <div class="search">
+        <input type="search" placeholder="Search" disabled />
+        <button class="search-btn" aria-label="Search" id="searchBtn"></button>
       </div>
     </div>
-
-    <div class="header-right">
-      <button class="icon-btn">＋</button>
-      <button class="icon-btn">🔔</button>
+    <div class="topbar-right">
+      <a href="admin.html" class="icon-btn" title="Admin" id="adminLink"></a>
       <div class="avatar">B</div>
     </div>
   </header>
 
-  <div class="watch-layout">
-    <div class="watch-main">
-      <div class="player-wrap">
+  <div class="watch-shell">
+    <div class="watch-primary">
+      <div class="player">
         <video id="player" controls playsinline preload="metadata"></video>
       </div>
-
-      <h1 class="watch-title" id="title">Loading…</h1>
-
-      <div class="watch-meta-row">
-        <div class="channel-info">
-          <div class="channel-avatar large" id="channelAvatar">B</div>
+      <h1 class="w-title" id="title">Loading…</h1>
+      <div class="w-actions">
+        <div class="w-channel">
+          <div class="ch-avatar lg" id="chAvatar">?</div>
           <div>
-            <p class="channel-name" id="channelName">Channel</p>
-            <p class="subs" id="subs">1.2K subscribers</p>
+            <p class="ch-name" id="chName">—</p>
+            <p class="ch-sub">Channel</p>
           </div>
-          <button class="subscribe-btn">Subscribe</button>
+          <button class="btn-sub">Subscribe</button>
         </div>
-
-        <div class="action-btns">
-          <button class="action-btn">👍 Like</button>
-          <button class="action-btn">👎</button>
-          <button class="action-btn">↗ Share</button>
+        <div class="w-btns">
+          <button class="btn-pill" id="likeBtn"></button>
+          <button class="btn-pill" id="dislikeBtn"></button>
+          <button class="btn-pill" id="shareBtn"></button>
         </div>
       </div>
-
-      <div class="description-box">
-        <p class="views-date" id="viewsDate"></p>
-        <p id="description"></p>
+      <div class="w-desc">
+        <p class="w-stats" id="stats"></p>
+        <p id="desc"></p>
       </div>
     </div>
-
-    <aside class="watch-sidebar" id="related">
-      <!-- Related videos filled by JS -->
-    </aside>
+    <aside class="watch-related" id="related"></aside>
   </div>
 
-  <script src="videos.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/store.js"></script>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id") || "demo";
-    const video = window.BLUTUBE_VIDEOS.find(v => v.id === id) || window.BLUTUBE_VIDEOS[0];
+    document.getElementById("searchBtn").innerHTML = icon("search");
+    document.getElementById("adminLink").innerHTML = icon("settings");
+    document.getElementById("likeBtn").innerHTML = icon("thumbsUp") + " Like";
+    document.getElementById("dislikeBtn").innerHTML = icon("thumbsDown");
+    document.getElementById("shareBtn").innerHTML = icon("share") + " Share";
 
-    document.getElementById("title").textContent = video.title;
-    document.getElementById("description").textContent = video.description || "";
-    document.getElementById("channelName").textContent = video.channel;
-    document.getElementById("channelAvatar").textContent = video.channel.charAt(0);
-    document.getElementById("viewsDate").textContent = `${video.views} · ${video.uploaded}`;
-    document.title = video.title + " · Blutube";
+    function escapeHtml(s) {
+      return String(s || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
 
-    const player = document.getElementById("player");
-    player.src = video.src || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+    async function init() {
+      const videos = await BlutubeStore.load();
+      const id = new URLSearchParams(location.search).get("id");
+      const video = videos.find(v => v.id === id) || videos[0];
+      if (!video) {
+        document.getElementById("title").textContent = "Video not found";
+        return;
+      }
 
-    // Related videos (exclude current)
-    const related = window.BLUTUBE_VIDEOS.filter(v => v.id !== video.id);
-    document.getElementById("related").innerHTML = related.map(v => `
-      <a class="related-card" href="watch.html?id=${v.id}">
-        <div class="related-thumb">
-          <img src="${v.thumbnail}" alt="" />
-          <span class="duration">${v.duration}</span>
-        </div>
-        <div class="related-meta">
-          <h4>${v.title}</h4>
-          <p>${v.channel}</p>
-          <p>${v.views} · ${v.uploaded}</p>
-        </div>
-      </a>
-    `).join("");
+      document.title = video.title + " · Blutube";
+      document.getElementById("title").textContent = video.title;
+      document.getElementById("desc").textContent = video.description || "";
+      document.getElementById("chName").textContent = video.channel || "Unknown";
+      document.getElementById("chAvatar").textContent = (video.channel || "?").charAt(0);
+      document.getElementById("stats").textContent = `${video.views || ""} · ${video.uploaded || ""}`;
+
+      const player = document.getElementById("player");
+      player.src = video.src || "";
+
+      document.getElementById("shareBtn").addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(location.href);
+          alert("Link copied");
+        } catch {
+          prompt("Copy this link:", location.href);
+        }
+      });
+
+      const related = videos.filter(v => v.id !== video.id);
+      document.getElementById("related").innerHTML = related.map(v => `
+        <a class="rel" href="watch.html?id=${encodeURIComponent(v.id)}">
+          <div class="rel-thumb">
+            <img src="${v.thumbnail}" alt="" />
+            <span class="dur">${escapeHtml(v.duration)}</span>
+          </div>
+          <div class="rel-meta">
+            <h4>${escapeHtml(v.title)}</h4>
+            <p>${escapeHtml(v.channel)}</p>
+            <p>${escapeHtml(v.views)} · ${escapeHtml(v.uploaded)}</p>
+          </div>
+        </a>
+      `).join("");
+    }
+
+    init().catch(console.error);
   </script>
 </body>
 </html>
